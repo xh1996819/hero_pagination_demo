@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/twbs-pagination/jquery.twbsPagination.min.js"></script>
+    <script src="../node_modules/art-template/lib/template-web.js"></script>
+    <style>
+        .callerName {
+            font-size: 24px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img src="./images/80103-big.jpg" alt="...">
+                <div class="caption">
+                    <p><img src="./images/80103.jpg" alt=""></p>
+                    <h3>晕眩</h3>
+
+                    <p>LV.13解锁</p>
+                    <p>90秒CD：晕眩身边所有敌人0.75秒，并附带持续1秒的减速效果</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li>
+                <a href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li>
+            <li>
+                <a href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <script type="text/template" id="info">
+        {{each data val}}
+        <img src="{{val.bigImg}}" alt="...">
+        <div class="caption">
+            <span><img src="{{val.callerImg}}" alt=""></span>
+            <span class="callerName">{{val.callerName}}</span>
+
+            <p style = "font-size:16px">{{val.locked}}</p>
+            <p style = "font-size:14px">{{val.desc}}</p>
+        </div>
+        {{/each}}
+    </script>
+
+    <script>
+        $(function () {
+
+            let currentPage = 1;
+            let pageSize = 1;
+            function render() {
+                $.ajax({
+                    type: 'get',
+                    url: '/getAll',
+                    data: {
+                        currentPage,
+                        pageSize
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res);
+                        if (res.status === 200) {
+                            var str = template('info', res)
+                            $('.thumbnail').html(str)
+                            $(".pagination").twbsPagination({
+                                totalPages: res.totalPage,
+                                visiblePages: 5,
+                                first: "首页",
+                                last: "尾页",
+                                prev: "上一页",
+                                next: "下一页",
+                                initiateStartPageClick: false,
+                                onPageClick: function (event, page) {
+                                    currentPage = page;
+                                    render()
+                                }
+                            })
+                        }
+
+                    }
+                })
+            }
+            render()
+
+        })
+
+    </script>
+
+</body>
+
+</html>
